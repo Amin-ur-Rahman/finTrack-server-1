@@ -66,4 +66,48 @@ const logoutUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, logoutUser };
+// -==============login function==============
+
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const db = await getDB();
+    const usersColl = db.collection("users");
+
+    // email validation---------
+    const user = await usersColl.findOne({ email });
+    if (!user) {
+      return res
+        .status(401)
+        .send({ message: "Invalid Email, account doesn't exist" });
+    }
+
+    // --------password validation
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).send({ message: "Invalid password" });
+    }
+
+    // creating token
+    const payload = { email: user.email, id: user._id };
+    const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
+
+    // sending cookie as response
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      })
+      .send({
+        success: true,
+        user: { username: user.username, email: user.email },
+      });
+  } catch (error) {
+    res.status(500).send({ message: "Server Error: " + error.message });
+  }
+};
+
+module.exports = { registerUser, logoutUser, loginUser };
