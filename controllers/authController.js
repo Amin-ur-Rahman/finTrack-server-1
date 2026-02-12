@@ -6,6 +6,7 @@ const registerUser = async (req, res) => {
   try {
     const userData = req.body;
     const db = await getDB();
+    console.log("password", userData.password);
 
     const usersColl = db.collection("users");
 
@@ -18,7 +19,7 @@ const registerUser = async (req, res) => {
     // hashing the password
 
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    await usersColl.insertOne({
+    const result = await usersColl.insertOne({
       username: userData.username,
       email: userData.email,
       password: hashedPassword,
@@ -26,16 +27,18 @@ const registerUser = async (req, res) => {
       photoUrl: userData.imageUrl,
     });
     // creating the token
-    const payload = { email: userData.email };
+    const payload = { email: userData.email, id: result.insertedId };
     const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "1h",
     });
+    console.log(token);
+
     // setting up jwt with http-only cookie method
     res
       .cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       })
       .send({
         success: true,
@@ -47,4 +50,20 @@ const registerUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser };
+// logout user funciton===================
+
+const logoutUser = async (req, res) => {
+  try {
+    res
+      .clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      })
+      .send({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).send({ message: "Logout failed" });
+  }
+};
+
+module.exports = { registerUser, logoutUser };
