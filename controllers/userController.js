@@ -6,8 +6,9 @@ const updateProfile = async (req, res) => {
     const { username, currency, imageUrl } = req.body;
     const db = getDB();
     const usersColl = db.collection("users");
+    // console.log("user_ID", req.user.id);
 
-    const filter = { _id: new ObjectId(req.user._id) };
+    const filter = { _id: new ObjectId(req.user.id) };
     const updateDoc = {
       $set: {
         ...(username && { username }),
