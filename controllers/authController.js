@@ -31,7 +31,11 @@ const registerUser = async (req, res) => {
       updatedAt: new Date(),
     });
     // creating the token
-    const payload = { email: userData.email, id: result.insertedId };
+    const payload = {
+      email: userData.email,
+      id: result.insertedId,
+      role: "user",
+    };
     const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "1h",
     });
@@ -93,7 +97,7 @@ const loginUser = async (req, res) => {
     }
 
     // creating token
-    const payload = { email: user.email, id: user._id };
+    const payload = { email: user.email, id: user._id, role: user.role };
     const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "1h",
     });
@@ -107,7 +111,7 @@ const loginUser = async (req, res) => {
       })
       .send({
         success: true,
-        user: { username: user.username, email: user.email },
+        user: { username: user.username, email: user.email, role: user.role },
       });
   } catch (error) {
     res.status(500).send({ message: "Server Error: " + error.message });

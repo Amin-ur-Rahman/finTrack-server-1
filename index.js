@@ -7,6 +7,7 @@ const port = process.env.PORT || 5000;
 const { connectDB } = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 
 connectDB();
 
@@ -27,6 +28,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/category", categoryRoutes);
 
 app.listen(port, () => {
   console.log("server is running at port:", port);
