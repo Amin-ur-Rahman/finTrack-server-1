@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = async (req, res, next) => {
   const token = req.cookies?.token;
-  console.log(token);
+  // console.log("toekn from middleware", token);
 
   if (!token) return res.status(401).send({ message: "Unauthorized Request" });
 

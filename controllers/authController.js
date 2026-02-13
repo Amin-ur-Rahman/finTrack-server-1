@@ -31,14 +31,14 @@ const registerUser = async (req, res) => {
     const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "1h",
     });
-    console.log(token);
+    console.log("token", token);
 
     // setting up jwt with http-only cookie method
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: false,
+        sameSite: "lax",
       })
       .send({
         success: true,
@@ -57,8 +57,8 @@ const logoutUser = async (req, res) => {
     res
       .clearCookie("token", {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        secure: false,
+        sameSite: "lax",
       })
       .send({ success: true, message: "Logged out successfully" });
   } catch (error) {
