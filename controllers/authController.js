@@ -25,6 +25,7 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       photoUrl: userData.profile,
       photoUrl: userData.imageUrl,
+      role: "user",
     });
     // creating the token
     const payload = { email: userData.email, id: result.insertedId };
