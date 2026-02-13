@@ -5,6 +5,7 @@ const {
   addCategory,
   getCategories,
   deleteCategory,
+  updateCategory,
 } = require("../controllers/categoryController");
 
 const verifyAdmin = (req, res, next) => {
@@ -18,5 +19,6 @@ router.get("/", verifyToken, getCategories);
 
 router.post("/", verifyToken, verifyAdmin, addCategory);
 router.delete("/:id", verifyToken, verifyAdmin, deleteCategory);
+router.patch("/:id", verifyToken, verifyAdmin, updateCategory);
 
 module.exports = router;

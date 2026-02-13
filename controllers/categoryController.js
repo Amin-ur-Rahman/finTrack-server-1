@@ -52,4 +52,40 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-module.exports = { addCategory, getCategories, deleteCategory };
+const updateCategory = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { name, type, icon } = req.body;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).send({ message: "Invalid Category ID format" });
+    }
+    const db = getDB();
+
+    const filter = { _id: new ObjectId(id) };
+
+    const updateDoc = {
+      $set: {
+        ...(name && { name }),
+        ...(type && { type }),
+        ...(icon && { icon }),
+        updatedAt: new Date(),
+      },
+    };
+
+    const result = await db
+      .collection("categories")
+      .updateOne(filter, updateDoc);
+
+    if (result.matchedCount === 0) {
+      return res.status(404).send({ message: "Category not found" });
+    }
+
+    res.send(result);
+  } catch (error) {
+    console.error("Update Error:", error);
+    res.status(500).send({ message: "Server error during update" });
+  }
+};
+
+module.exports = { addCategory, getCategories, deleteCategory, updateCategory };
