@@ -5,7 +5,8 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 5000;
 const { connectDB } = require("./config/db");
-const auth = require("./routes/authRoutes");
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
 
 connectDB();
 
@@ -24,7 +25,8 @@ app.get("/", (req, res) => {
   res.send("server is running");
 });
 
-app.use("/api/auth", auth);
+app.use("/api/auth", authRoutes);
+app.use("/user", userRoutes);
 
 app.listen(port, () => {
   console.log("server is running at port:", port);

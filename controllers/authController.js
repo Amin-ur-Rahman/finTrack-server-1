@@ -23,9 +23,12 @@ const registerUser = async (req, res) => {
       username: userData.username,
       email: userData.email,
       password: hashedPassword,
-      photoUrl: userData.profile,
+
       photoUrl: userData.imageUrl,
       role: "user",
+      currency: "BDT",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
     // creating the token
     const payload = { email: userData.email, id: result.insertedId };
