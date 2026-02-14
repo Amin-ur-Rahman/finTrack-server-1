@@ -120,9 +120,56 @@ const updateTransaction = async (req, res) => {
   }
 };
 
+// ====================delete transaction==============
+
+const deleteTransaction = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const userEmail = req.user?.email;
+    const userRole = req.user?.role;
+
+    if (!id || !ObjectId.isValid(id)) {
+      return res
+        .status(400)
+        .send({ message: "Invalid Transaction ID format." });
+    }
+    const db = getDB();
+
+    const query = { _id: new ObjectId(id) };
+
+    const transaction = await db.collection("transactions").findOne(query);
+
+    if (!transaction) {
+      return res.status(404).send({ message: "Transaction not found." });
+    }
+
+    if (userRole !== "admin" && transaction.userEmail !== userEmail) {
+      return res.status(403).send({
+        message: "Access Denied: You can only delete your own records.",
+      });
+    }
+
+    const result = await db.collection("transactions").deleteOne(query);
+
+    if (result.deletedCount === 1) {
+      res.status(200).send({
+        success: true,
+        message: "Transaction deleted successfully",
+        deletedId: id,
+      });
+    } else {
+      res.status(500).send({ message: "Failed to delete the transaction." });
+    }
+  } catch (error) {
+    console.error("Delete Transaction Error:", error);
+    res.status(500).send({ message: "Internal server error." });
+  }
+};
+
 module.exports = {
   addTransaction,
   getTransactionsForAdmin,
   getMyTransactions,
   updateTransaction,
+  deleteTransaction,
 };
