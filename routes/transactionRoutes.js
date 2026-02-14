@@ -15,7 +15,7 @@ const {
 const { getDashboardStats } = require("../controllers/dashboardController");
 
 router.post("/", verifyToken, addTransaction);
-router.get("/admin", verifyAdmin, getTransactionsForAdmin);
+router.get("/admin", verifyToken, verifyAdmin, getTransactionsForAdmin);
 router.get("/savings-stats", verifyToken, getMonthlySavingsStats);
 router.get("/user-stats/:email", verifyToken, getDashboardStats); //order matters here, at first it was hitting the /:email route
 router.get("/:email", verifyToken, getMyTransactions);

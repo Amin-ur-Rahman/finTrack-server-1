@@ -99,7 +99,7 @@ const loginUser = async (req, res) => {
     // creating token
     const payload = { email: user.email, id: user._id, role: user.role };
     const token = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "24h",
     });
 
     // sending cookie as response
