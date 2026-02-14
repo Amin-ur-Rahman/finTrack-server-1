@@ -39,9 +39,10 @@ const contributeToGoal = async (req, res) => {
       userEmail,
       title: title || "Goal Contribution",
       amount: parsedAmount,
-      category: "Savings",
+      category: "savings",
       type: "expense",
       date: new Date(),
+      goalId: new ObjectId(id), //this line of code consumed a lot of time
       note: `Added to goal: ${id}`,
       isSavingsContribution: true,
     };
@@ -49,6 +50,8 @@ const contributeToGoal = async (req, res) => {
     const result = await db
       .collection("transactions")
       .insertOne(transactionDoc);
+    console.log("goal contribution", result);
+
     res.status(200).send({ message: "Contribution successful", result });
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });
@@ -69,4 +72,39 @@ const getGoals = async (req, res) => {
   }
 };
 
-module.exports = { createGoal, contributeToGoal, getGoals };
+// ==========================
+
+const getSingleGoalStats = async (req, res) => {
+  const { id } = req.params;
+  const db = getDB();
+
+  //   console.log("goalID, ", id);
+
+  try {
+    const stats = await db
+      .collection("transactions")
+      .aggregate([
+        {
+          $match: {
+            goalId: new ObjectId(id),
+            isSavingsContribution: true,
+          },
+        },
+        {
+          $group: {
+            _id: { month: { $month: "$date" }, year: { $year: "$date" } },
+            monthlyTotal: { $sum: "$amount" },
+          },
+        },
+        { $sort: { "_id.year": -1, "_id.month": -1 } },
+      ])
+      .toArray();
+
+    res.send(stats);
+    console.log(stats);
+  } catch (error) {
+    res.status(500).send({ message: "Error fetching goal stats" });
+  }
+};
+
+module.exports = { createGoal, contributeToGoal, getGoals, getSingleGoalStats };

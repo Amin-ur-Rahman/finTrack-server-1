@@ -208,10 +208,46 @@ const deleteTransaction = async (req, res) => {
   }
 };
 
+// =========monthly saving stats
+
+const getMonthlySavingsStats = async (req, res) => {
+  try {
+    const userEmail = req.user.email;
+    const db = getDB();
+
+    const monthlyStats = await db
+      .collection("transactions")
+      .aggregate([
+        {
+          $match: {
+            userEmail: userEmail,
+            category: "savings",
+          },
+        },
+        {
+          $group: {
+            _id: {
+              year: { $year: "$date" },
+              month: { $month: "$date" },
+            },
+            totalSaved: { $sum: "$amount" },
+          },
+        },
+        { $sort: { "_id.year": 1, "_id.month": 1 } },
+      ])
+      .toArray();
+
+    res.send(monthlyStats || []);
+  } catch (error) {
+    res.status(500).send({ message: "Failed to fetch savings trends" });
+  }
+};
+
 module.exports = {
   addTransaction,
   getTransactionsForAdmin,
   getMyTransactions,
   updateTransaction,
   deleteTransaction,
+  getMonthlySavingsStats,
 };
