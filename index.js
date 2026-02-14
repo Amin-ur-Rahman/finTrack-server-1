@@ -36,7 +36,7 @@ app.use("/category", categoryRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/goals", goalRoutes);
 app.use("/insights", insightsRoutes);
-app.use("/budget", budgetRoutes);
+app.use("/budgets", budgetRoutes);
 
 app.listen(port, () => {
   console.log("server is running at port:", port);
