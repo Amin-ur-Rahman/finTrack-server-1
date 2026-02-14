@@ -2,12 +2,18 @@ const express = require("express");
 const router = express.Router();
 
 const verifyToken = require("../middleware/verifyToken");
+const verifyAdmin = require("../middleware/verifyAdmin");
+
 const {
   addTransaction,
-  getTransactions,
+  getMyTransactions,
+  getTransactionsForAdmin,
+  updateTransaction,
 } = require("../controllers/transactionController");
 
 router.post("/", verifyToken, addTransaction);
-router.get("/", verifyToken, getTransactions);
+router.get("/admin", verifyAdmin, getTransactionsForAdmin);
+router.get("/:email", verifyToken, getMyTransactions);
+router.patch("/:id", verifyToken, updateTransaction);
 
 module.exports = router;
