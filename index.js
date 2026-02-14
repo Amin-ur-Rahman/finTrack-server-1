@@ -10,6 +10,8 @@ const userRoutes = require("./routes/userRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const goalRoutes = require("./routes/goalRoutes");
+const insightsRoutes = require("./routes/insightRoutes");
+const budgetRoutes = require("./routes/budgetRoutes");
 
 connectDB();
 
@@ -33,6 +35,8 @@ app.use("/user", userRoutes);
 app.use("/category", categoryRoutes);
 app.use("/transactions", transactionRoutes);
 app.use("/goals", goalRoutes);
+app.use("/insights", insightsRoutes);
+app.use("/budget", budgetRoutes);
 
 app.listen(port, () => {
   console.log("server is running at port:", port);
