@@ -8,6 +8,7 @@ const { connectDB } = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
 
 connectDB();
 
@@ -29,6 +30,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/category", categoryRoutes);
+app.use("/transactions", transactionRoutes);
 
 app.listen(port, () => {
   console.log("server is running at port:", port);
