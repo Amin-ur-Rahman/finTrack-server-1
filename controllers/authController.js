@@ -65,15 +65,17 @@ const logoutUser = async (req, res) => {
     res
       .clearCookie("token", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+
+        secure: true,
+        sameSite: "none",
+
+        path: "/",
       })
       .send({ success: true, message: "Logged out successfully" });
   } catch (error) {
     res.status(500).send({ message: "Logout failed" });
   }
 };
-
 // -==============login function==============
 
 const loginUser = async (req, res) => {
