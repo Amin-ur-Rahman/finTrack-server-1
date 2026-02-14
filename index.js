@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
+const goalRoutes = require("./routes/goalRoutes");
 
 connectDB();
 
@@ -31,6 +32,7 @@ app.use("/api/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/category", categoryRoutes);
 app.use("/transactions", transactionRoutes);
+app.use("/goals", goalRoutes);
 
 app.listen(port, () => {
   console.log("server is running at port:", port);
