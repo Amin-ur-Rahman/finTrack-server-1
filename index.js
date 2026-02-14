@@ -31,7 +31,7 @@ app.get("/", (req, res) => {
   res.send("server is running");
 });
 
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/category", categoryRoutes);
 app.use("/transactions", transactionRoutes);
