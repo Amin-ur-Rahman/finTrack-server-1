@@ -52,17 +52,59 @@ const getTransactionsForAdmin = async (req, res) => {
 const getMyTransactions = async (req, res) => {
   try {
     const userEmail = req.user.email;
-    const query = { userEmail: userEmail };
     const db = getDB();
+
+    const { search, type, sort, startDate, endDate, category } = req.query;
+
+    let query = { userEmail: userEmail };
+
+    if (type && type !== "all") {
+      query.type = type;
+    }
+
+    if (category && category !== "all") {
+      query.category = category;
+    }
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { note: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (startDate && endDate) {
+      query.date = {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      };
+    }
+
+    let sortOptions = {};
+    switch (sort) {
+      case "date_asc":
+        sortOptions = { date: 1 };
+        break;
+      case "amount_desc":
+        sortOptions = { amount: -1 };
+        break;
+      case "amount_asc":
+        sortOptions = { amount: 1 };
+        break;
+      case "date_desc":
+      default:
+        sortOptions = { date: -1 };
+    }
 
     const result = await db
       .collection("transactions")
       .find(query)
-      .sort({ date: -1 })
+      .sort(sortOptions)
       .toArray();
 
     res.status(200).send(result);
   } catch (error) {
+    console.error("Fetch Error:", error);
     res.status(500).send({ message: "Error fetching your transactions" });
   }
 };
